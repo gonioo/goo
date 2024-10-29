@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Цаг Агаарын Мэдээлэл</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+        }
+        .weather-container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        h2 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .temp {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .desc {
+            font-size: 1.2em;
+            color: #555;
+        }
+        select {
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        /* Media Query for screens less than 600px */
+        @media (max-width: 600px) {
+            .weather-container {
+                padding: 15px;
+                max-width: 90%;
+            }
+            h2 {
+                font-size: 1.3em;
+            }
+            .temp {
+                font-size: 1.8em;
+            }
+            .desc, .humidity {
+                font-size: 1em;
+            }
+            select, button {
+                width: 100%;
+                padding: 8px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="weather-container">
+    <h2>Цаг Агаарын Мэдээлэл</h2>
+    <select id="citySelector">
+        <option value="Ulaanbaatar">Улаанбаатар</option>
+        <option value="London">Лондон</option>
+        <option value="Seoul">Сөүл</option>
+        <option value="Tokyo">Токио</option>
+        <option value="Moscow">Москва</option>
+    </select>
+    <button id="getWeatherBtn">Цаг Агаар Харах</button>
+    <div class="temp" id="temperature">Температур: -</div>
+    <div class="desc" id="description">Тайлбар: -</div>
+    <div class="humidity" id="humidity">Чийгшил: -</div>
+</div>
+
+<script>
+    const apiKey = '59272318b768305d466e7ed1afd798cc';
+    const citySelector = document.getElementById('citySelector');
+    const getWeatherBtn = document.getElementById('getWeatherBtn');
+
+    async function fetchWeather(city) {
+        const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=mn`;
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+
+            if (data.cod === 200) {
+                document.getElementById('temperature').innerText = `Температур: ${data.main.temp}°C`;
+                document.getElementById('description').innerText = `Тайлбар: ${data.weather[0].description}`;
+                document.getElementById('humidity').innerText = `Чийгшил: ${data.main.humidity}%`;
+            } else {
+                document.getElementById('temperature').innerText = 'Мэдээлэл авахад алдаа гарлаа.';
+                document.getElementById('description').innerText = '';
+                document.getElementById('humidity').innerText = '';
+            }
+        } catch (error) {
+            console.error('Алдаа гарлаа:', error);
+            document.getElementById('temperature').innerText = 'Мэдээлэл авахад алдаа гарлаа.';
+        }
+    }
+
+    getWeatherBtn.addEventListener('click', () => {
+        const selectedCity = citySelector.value;
+        fetchWeather(selectedCity);
+    });
+
+    fetchWeather('Ulaanbaatar');
+</script>
+
+</body>
+</html>
